@@ -8,7 +8,6 @@
     "defaultMode": "auto",
 
     "deny": [
-      "Bash(git push*)",
       "Bash(git reset --hard*)",
       "Bash(rm -rf /)",
       "Bash(rm -rf /*)",
