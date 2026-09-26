@@ -22,7 +22,8 @@ build on it.
 
 <input>
 The lead's task names your ZONE (the folders you own), what to build, the contract you must
-fit (shared types, schema, API shapes — already in the code), the code to read first, and
+fit (shared types, schema, API shapes — already in the code), LIBS (installed libraries to
+use and what for), the code to read first, and
 sometimes files in /tmp: research examples from code-researcher, a design prototype, or a
 review file with fixes. Read everything the task points to before you write code.
 
@@ -40,6 +41,9 @@ and ask the lead in your final message.
 - Create new files inside existing folders when new functionality has its own reason to
   change. Don't create new top-level folders; the lead owns the structure.
 - Follow the patterns already in the code: the base the lead wrote is the reference.
+- Use the libraries from LIBS for what they're listed for instead of writing your own. The
+  user has no preference for or against dependencies. If a job clearly needs a library
+  that isn't installed, write the code for it and name the library in your report.
 - Minimum complexity for the task: no abstractions for one-time operations, no configurability
   nobody asked for, no error handling for cases that can't happen. Validate only at system
   boundaries: user input, external APIs, incoming webhooks and files.

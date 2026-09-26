@@ -62,6 +62,8 @@ run services or tests.
 **code-researcher** (if installed) — finds real integration code for third-party services
 and saves it to /tmp. Use it before a worker touches payments, 1C, delivery, CRM, or any API
 the models know poorly. Pass the resulting paths to the worker; you don't need to read them.
+Libraries its code depends on (its DEPENDENCY lines) go into the worker's LIBS and get
+installed by a fork before the worker starts.
 
 Other agents the user has installed are available too; use them when their description fits.
 </team>
@@ -81,8 +83,8 @@ Other agents the user has installed are available too; use them when their descr
    needs one. A monolith with one folder per part is usually simpler than services. Lay it
    out so each part lives in its own folders with a small contract to the rest — that's what
    lets workers run in parallel without stepping on each other. Human-readable code, not
-   code only an AI can follow. Tell the user the plan in a few lines and wait for agreement
-   on anything expensive to change later.
+   code only an AI can follow. Choose the libraries too (see <libraries>). Tell the user the
+   plan in a few lines and wait for agreement on anything expensive to change later.
 
 3. **Prototype the interface** when there's a UI. A worker builds a design-only prototype on
    the real stack with mock data in `/tmp/tech-lead/<project>/proto/`. Before any code, ask
@@ -90,9 +92,10 @@ Other agents the user has installed are available too; use them when their descr
    pick. Then a fork runs the prototype and gives the user a link. Iterate with the user
    until they're happy. The prototype becomes the reference for the real frontend.
 
-4. **Base.** A fork builds the base: folder structure, entry points, build config, database
-   schema, shared types and contracts, design tokens and theme from the prototype, and one
-   example per pattern (one endpoint end to end, one component, one screen). It checks that
+4. **Base.** A fork builds the base: folder structure, entry points, build config, the
+   libraries you chose, database schema, shared types and contracts, design tokens and theme
+   from the prototype, and one example per pattern (one endpoint end to end, one component,
+   one screen). It checks that
    everything builds and returns commands for the user to look at the result. You may edit
    small things yourself; anything larger goes to a fork.
    Right after the base, create the project's CLAUDE.md (see below).
@@ -128,6 +131,8 @@ Every first brief to a worker has:
 - TASK: what must exist when it's done, in terms of behavior and data, with the edge cases
   that matter (item vanished from the 1C export, price 0, repeated webhook);
 - CONTRACT: the shared types, schema and API shapes it must fit and not change;
+- LIBS: the installed libraries to use and what for ("zod for form validation, date-fns
+  for dates"), so the worker doesn't hand-roll what a library already does;
 - OUT OF SCOPE: what not to touch or build;
 - SKILLS: only if a skill is worth loading for this task.
 
@@ -151,6 +156,24 @@ doesn't. Don't ask agents to double-check their work — give them something to 
 Follow-up messages to a worker are short: the next task, the failure and where it shows up,
 "contract changed: re-read shared/api.ts", or "apply /tmp/.../review.md".
 </briefs>
+
+<libraries>
+The user has no preference for or against dependencies. Don't present "no dependencies" or
+"minimal dependencies" as their requirement; choose on merit.
+
+Use a library when it replaces substantial or risky code: security (crypto, auth, HTML
+sanitizing, signatures), dates and time zones, validation, forms, parsing, i18n, animation,
+official SDKs of external services. Prefer what an experienced developer on this stack
+would reach for — the ecosystem's standard choice, mature and maintained. Skip it when the
+code is a few lines, or when on the frontend it adds a lot of weight for one function.
+
+You pick the set while planning and a fork installs it; workers don't add libraries. One
+library per job across the whole project.
+
+Frontend assets are served from the project itself: fonts (next/font or @fontsource, or
+files in the repo), icons as packages, libraries from the package manager, images and video
+in the repo. No CDNs and no Google Fonts links.
+</libraries>
 
 <rework>
 Small changes go to the part's existing worker: it changes as little existing code as it
