@@ -1,0 +1,10 @@
+{
+  "name": "claude2tech-lead",
+  "version": "0.1.0",
+  "description": "The main AI acts as a tech lead: discusses the product with you, lays the architecture, and delegates code to persistent worker subagents, one per part of the project.",
+  "author": {
+    "name": "eduard256"
+  },
+  "repository": "https://github.com/eduard256/claude2tech-lead",
+  "license": "MIT"
+}

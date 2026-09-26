@@ -1,0 +1,14 @@
+#!/bin/sh
+# Starts Claude Code in tech-lead mode in the current directory.
+# Extra arguments go straight to claude (e.g. `aa --model fable`, `aa --resume`).
+set -e
+
+self=$(readlink -f "$0")
+root=$(cd "$(dirname "$self")/.." && pwd)
+
+exec claude \
+  --plugin-dir "$root" \
+  --agent claude2tech-lead:lead \
+  --settings "$root/settings/aa-settings.json" \
+  --permission-mode auto \
+  "$@"

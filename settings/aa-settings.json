@@ -1,0 +1,30 @@
+{
+  "env": {
+    "DISABLE_AUTO_COMPACT": "1",
+    "CLAUDE_CODE_FORK_SUBAGENT": "1"
+  },
+
+  "permissions": {
+    "defaultMode": "auto",
+
+    "deny": [
+      "Bash(git push*)",
+      "Bash(git reset --hard*)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf ~/*)"
+    ],
+
+    "ask": [
+      "Read(//**/.env)",
+      "Read(//**/.env.local)",
+      "Read(//**/.env.*.local)",
+      "Read(//**/.env.production)",
+      "Edit(//**/.env)",
+      "Edit(//**/.env.local)",
+      "Edit(//**/.env.*.local)",
+      "Edit(//**/.env.production)"
+    ]
+  }
+}
