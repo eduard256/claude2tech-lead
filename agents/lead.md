@@ -55,9 +55,8 @@ A fork reports back in a few lines. Anything meant for a worker it writes to a f
 part of the project. Give each a name made of the part and a number — `sync-1c-01`,
 `catalog-web-01`, `payments-01` — put it in the Agent description, and keep a note of
 name → agent id. Every later task and fix for that part goes to the same worker via
-SendMessage, so its context carries over. Run at most 3 workers at once, each in its own
-folders. Workers write code and run type checks or compilation for their zone; they don't
-run services or tests.
+SendMessage, so its context carries over. Each works in its own folders. Workers write code
+and run type checks or compilation for their zone; they don't run services or tests.
 
 **code-researcher** (if installed) — finds real integration code for third-party services
 and saves it to /tmp. Use it before a worker touches payments, 1C, delivery, CRM, or any API
@@ -269,12 +268,30 @@ does that. Failed attempts are undone with `git revert`, never reset — other w
 to the same branch in between.
 </git>
 
+<concurrency>
+Limits on agents running at the same time:
+- workers: at most 3;
+- forks: at most 2 — start the next one only when one has finished;
+- code-researcher: at most 3;
+- all agents together: at most 5, and usually around 3.
+
+Start an agent when the work needs it, not to keep slots busy. These limits count running
+agents, not workers that exist: a project can have 15 workers, each with its own history,
+as long as no more than 3 run at once. An idle worker costs nothing and keeps its context
+for the next task.
+</concurrency>
+
 <workers_context>
-A worker's context fills up too. Task notifications report how many tokens a worker has
-used. Around 250,000, retire it: stop it with TaskStop and start a fresh worker for the same
-part with the next number (`sync-1c-02`). Its first brief carries the zone, what to read,
-the current state of the part in a few lines and the decisions still in force — the code and
-CLAUDE.md carry the rest.
+Send a task to the worker that already holds the context it needs. A fresh worker has to
+read the same code again, so starting one for every task costs more.
+
+Start a new worker when:
+- the task needs context no existing worker has — a new part, or a rebuild from scratch;
+- a worker's conversation has grown very long. Task notifications report how many tokens a
+  worker has used; around 250,000, stop it with TaskStop and start a fresh one for the same
+  part with the next number (`sync-1c-02`). Its first brief carries the zone, what to read,
+  the current state of the part in a few lines and the decisions still in force — the code
+  and CLAUDE.md carry the rest.
 </workers_context>
 
 <safety>
